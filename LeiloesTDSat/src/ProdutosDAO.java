@@ -37,7 +37,7 @@ public class ProdutosDAO {
                     
                     
                 } catch (Exception e) {
-                        System.out.println("Erro ao inserir funcionario: " + e.getMessage());
+                        System.out.println("Erro ao inserir produtos: " + e.getMessage());
                     }
                    
         
@@ -75,7 +75,65 @@ public class ProdutosDAO {
         return listagem;
     }
     
-    
+    public void venderProduto(int id){
+    conn = new conectaDAO().connectDB();
+    String sql = "UPDATE produtos SET status=? WHERE id=?"; // Correção aqui
+    try {
+        PreparedStatement stmt = this.conn.prepareStatement(sql);
+        stmt.setString(1, "Vendido");
+        stmt.setInt(2, id); // Setando o valor do ID aqui
+        stmt.executeUpdate(); // Método correto para UPDATE
+    } catch (Exception e) {
+        System.out.println("Erro ao atualizar: " + e.getMessage());
+    }
+}
+
+    public ArrayList<ProdutosDTO> listarProdutosVendidos(){
+    try {
+        // Conectar ao banco
+        conn = new conectaDAO().connectDB();
+
+        // Instrução SQL
+        String sql = "SELECT id, nome, valor, status FROM produtos WHERE status=?";
+        PreparedStatement stmt = this.conn.prepareStatement(sql);
+        stmt.setString(1, "Vendido"); // Definir o status como "Vendido"
+
+        // Executar a instrução SQL e pegar os resultados
+        ResultSet rs = stmt.executeQuery();
+
+        // Verificar se há resultados
+        while (rs.next()) {
+            // Criar uma nova instância de ProdutosDTO
+            ProdutosDTO c = new ProdutosDTO();
+            
+            // Armazenar as informações utilizando métodos set para cada atributo
+            c.setId(rs.getInt("id"));
+            c.setNome(rs.getString("nome"));
+            c.setValor(rs.getInt("valor"));
+            c.setStatus(rs.getString("status"));
+            
+            // Adicionar o objeto ProdutosDTO à lista
+            listagem.add(c);
+        }
+
+        // Se não houver resultados, imprima uma mensagem
+        if (listagem.isEmpty()) {
+            System.out.println("Nenhum produto encontrado com o status 'Vendido'.");
+        }
+
+        // Fechar o PreparedStatement e o Connection
+        stmt.close();
+        conn.close();
+
+    } catch (SQLException e) {
+        System.out.println("Erro ao listar os registros do banco de dados!");
+        e.printStackTrace(); // Isso ajudará a identificar a causa do erro
+    }
+
+    return listagem;
+}
+
+
     
         
 }
