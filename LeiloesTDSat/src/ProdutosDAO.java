@@ -37,7 +37,7 @@ public class ProdutosDAO {
                     
                     
                 } catch (Exception e) {
-                        System.out.println("Erro ao inserir funcionario: " + e.getMessage());
+                        System.out.println("Erro ao inserir produtos: " + e.getMessage());
                     }
                    
         
@@ -75,7 +75,19 @@ public class ProdutosDAO {
         return listagem;
     }
     
-    
+    public void venderProduto(int id){
+    conn = new conectaDAO().connectDB();
+    String sql = "UPDATE produtos SET status=? WHERE id=?"; // Correção aqui
+    try {
+        PreparedStatement stmt = this.conn.prepareStatement(sql);
+        stmt.setString(1, "Vendido");
+        stmt.setInt(2, id); // Setando o valor do ID aqui
+        stmt.executeUpdate(); // Método correto para UPDATE
+    } catch (Exception e) {
+        System.out.println("Erro ao atualizar: " + e.getMessage());
+    }
+}
+
     
         
 }
